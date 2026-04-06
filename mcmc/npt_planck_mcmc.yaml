@@ -1,0 +1,221 @@
+# NPT Completion-Deficit Dark Energy: Full Planck Likelihood MCMC
+# Cobaya configuration file
+# 
+# SETUP INSTRUCTIONS:
+# 1. Install Cobaya: pip install cobaya
+# 2. Install Planck likelihood: cobaya-install planck_2018_highl_plik.TTTEEE_lite
+# 3. Install BAO likelihood: cobaya-install bao.desi_2024_bao_all
+# 4. Copy modified CLASS source files from ../class-modification/
+# 5. Build CLASS with Python wrapper: cd class_public && make && pip install -e python/
+# 6. Run: cobaya-run npt_planck_mcmc.yaml
+
+# ============================================================
+# THEORY
+# ============================================================
+theory:
+  classy:
+    path: null  # Uses system classy install
+    extra_args:
+      # NPT scalar field parameters
+      Omega_Lambda: 0
+      Omega_fld: 0
+      Omega_scf: -1
+      attractor_ic_scf: no
+      scf_tuning_index: 0
+      
+      # Fixed parameters
+      N_ur: 2.0328
+      N_ncdm: 1
+      m_ncdm: 0.06
+      T_cmb: 2.7255
+      
+      # Output
+      output: tCl,pCl,lCl,mPk
+      lensing: yes
+      l_max_scalars: 2508
+      P_k_max_h/Mpc: 1.0
+
+# ============================================================
+# PARAMETERS
+# ============================================================
+params:
+  # Sampled parameters
+  H0:
+    prior:
+      min: 60
+      max: 80
+    ref:
+      dist: norm
+      loc: 67
+      scale: 2
+    proposal: 0.5
+    latex: H_0
+    
+  omega_b:
+    prior:
+      min: 0.019
+      max: 0.025
+    ref:
+      dist: norm
+      loc: 0.02237
+      scale: 0.0005
+    proposal: 0.0002
+    latex: \omega_b
+    
+  omega_cdm:
+    prior:
+      min: 0.09
+      max: 0.15
+    ref:
+      dist: norm
+      loc: 0.115
+      scale: 0.005
+    proposal: 0.002
+    latex: \omega_{cdm}
+    
+  logA:
+    prior:
+      min: 2.5
+      max: 3.5
+    ref:
+      dist: norm
+      loc: 3.044
+      scale: 0.05
+    proposal: 0.01
+    latex: \log(10^{10} A_s)
+    drop: true
+    
+  n_s:
+    prior:
+      min: 0.9
+      max: 1.05
+    ref:
+      dist: norm
+      loc: 0.9649
+      scale: 0.01
+    proposal: 0.004
+    latex: n_s
+    
+  tau_reio:
+    prior:
+      min: 0.01
+      max: 0.12
+    ref:
+      dist: norm
+      loc: 0.0544
+      scale: 0.01
+    proposal: 0.005
+    latex: \tau_{reio}
+
+  # NPT-specific parameter
+  N_i:
+    prior:
+      min: 2.5
+      max: 5.0
+    ref:
+      dist: norm
+      loc: 2.9
+      scale: 0.3
+    proposal: 0.1
+    latex: N_i
+    renames: scf_parameters__5  # 6th entry in scf_parameters array (phi_ini)
+
+  # Derived parameters
+  A_s:
+    value: "lambda logA: 1e-10*np.exp(logA)"
+    latex: A_s
+    
+  sigma8:
+    latex: \sigma_8
+    
+  S8:
+    derived: "lambda sigma8, omega_b, omega_cdm, H0: sigma8*((omega_b+omega_cdm)/(H0/100)**2/0.3)**0.5"
+    latex: S_8
+
+  age:
+    latex: "\\mathrm{Age}/\\mathrm{Gyr}"
+    
+  rdrag:
+    latex: r_\mathrm{drag}
+
+# ============================================================
+# LIKELIHOODS
+# ============================================================
+likelihood:
+  # Planck 2018 CMB (lite version for faster evaluation)
+  planck_2018_highl_plik.TTTEEE_lite:
+    # Full Planck TT+TE+EE high-ell likelihood
+    
+  planck_2018_lowl.TT:
+    # Low-ell TT likelihood
+    
+  planck_2018_lowl.EE:
+    # Low-ell EE likelihood
+    
+  planck_2018_lensing.clik:
+    # CMB lensing likelihood
+
+  # BAO from DESI (or BOSS/eBOSS if DESI not available in Cobaya)
+  # Uncomment whichever is available:
+  # bao.desi_2024_bao_all:
+  bao.sixdf_2011_bao:
+  bao.sdss_dr7_mgs:
+  bao.sdss_dr16_baoplus_lrg1:
+  bao.sdss_dr16_baoplus_lrg2:
+  bao.sdss_dr16_baoplus_lrg3:
+  bao.sdss_dr16_baoplus_elg:
+  bao.sdss_dr16_baoplus_qso:
+  bao.sdss_dr16_baoplus_lyauto:
+  bao.sdss_dr16_baoplus_lyxqso:
+
+  # DES Y3 3x2pt (if available, otherwise use S8 prior below)
+  # des_y3.des_cosmic_shear:
+  
+  # Simple S8 Gaussian prior from DES Y6 (use if full DES not available)
+  # Uncomment this and comment out DES likelihood above:
+  S8_prior:
+    external: "lambda S8: -0.5*((S8-0.789)/0.012)**2"
+
+# ============================================================
+# SAMPLER
+# ============================================================
+sampler:
+  mcmc:
+    Rminus1_stop: 0.03
+    Rminus1_cl_stop: 0.15
+    max_tries: 10000
+    burn_in: 300
+    learn_proposal: true
+    learn_proposal_Rminus1_max: 30
+    # For initial exploration, use:
+    # max_samples: 5000
+    # For production run, comment out max_samples
+
+# ============================================================
+# OUTPUT
+# ============================================================
+output: chains/npt_planck
+
+# ============================================================
+# NOTES
+# ============================================================
+# 
+# The scf_parameters array for CLASS must be constructed as:
+# scf_parameters = V0_guess, 1.0, 1.0, 1.0, N_i, 0.0
+#
+# V0 (scf_parameters[0]) is tuned by CLASS shooting.
+# N_i (scf_parameters[4]) is the sampled parameter.
+# phi_prime_ini (scf_parameters[5]) = 0 (Hubble-frozen start).
+#
+# IMPORTANT: The 'renames' field for N_i may need adjustment
+# depending on how Cobaya passes scf_parameters to CLASS.
+# You may need a custom theory wrapper instead. See
+# npt_theory_wrapper.py for an alternative approach.
+#
+# Expected runtime: 
+#   - Lite Planck likelihood: ~2-3 days on 4 cores
+#   - Full Planck likelihood: ~5-7 days on 4 cores
+#   - Recommended: run on 8+ cores with MPI
+#
+# To run with MPI:
+#   mpirun -n 8 cobaya-run npt_planck_mcmc.yaml
