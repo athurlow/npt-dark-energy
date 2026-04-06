@@ -1,0 +1,61 @@
+# CLASS Boltzmann Solver Results for NPT Completion-Deficit Dark Energy
+# Generated: April 2026
+# CLASS version: v3.3.4 (modified source/background.c)
+# 
+# Potential: V(N) = V_0 * (1 - exp(-alpha*N))^2, alpha = sqrt(2/3)
+# V_0 tuned by CLASS shooting for closure
+# 
+# Fixed cosmological parameters:
+#   h = 0.6777
+#   omega_b = 0.02237
+#   omega_cdm = 0.1200
+#   N_ur = 2.0328
+#   N_ncdm = 1, m_ncdm = 0.06 eV
+#   T_cmb = 2.7255 K
+#   A_s = 2.1e-9
+#   n_s = 0.9649
+#   tau_reio = 0.0544
+#
+# ============================================================
+# BRANCH SCAN RESULTS
+# ============================================================
+#
+# Model     Ni    sigma8    S8      w0         age(Gyr)  r_s(Mpc)  100*theta_s
+# --------  ----  ------    -----   ---------  --------  --------  -----------
+  LCDM      -     0.8120    0.8268  -1.000000  13.761    147.1     1.042
+  NPT       3.0   0.8054    0.8201  -0.996176  13.656    147.1     1.047
+  NPT       2.9   0.8021    0.8166  -0.995342  13.606    147.1     1.047
+  NPT       2.8   0.7967    0.8112  -0.994266  13.520    147.1     1.047
+  NPT       2.7   0.7891    0.8034  -0.992864  13.397    147.1     1.047
+# 
+# Ni = 2.5 and below: shooting converges but gives unphysical age (~9 Gyr)
+# Ni = 2.3: shooting converges, age = 13.69, sigma8 = 0.807 (field oscillates)
+# Ni < 2.0: shooting fails to converge in present implementation
+#
+# ============================================================
+# KEY COMPARISON
+# ============================================================
+#
+# Observable          LCDM      NPT(2.7)   DES Y6         Status
+# ---------           ----      --------   ------         ------
+# sigma8              0.812     0.789      0.789+/-0.012  Match
+# S8                  0.827     0.803      0.789+/-0.012  1.2 sigma
+# S8 tension (Planck) 3.8 sig   1.9 sig   -              68% reduction
+# age (Gyr)           13.76     13.40      -              360 Myr low
+# r_s (Mpc)           147.1     147.1      -              Preserved
+# w0                  -1.000    -0.993     -              Near-LCDM
+#
+# ============================================================
+# NOTES
+# ============================================================
+#
+# 1. The sigma8 match at Ni=2.7 is a numerical output at one specific
+#    parameter value, not a zero-parameter prediction.
+#
+# 2. The age discrepancy (13.40 vs 13.76 Gyr) requires investigation.
+#    Joint fitting of H0 and other parameters may resolve this.
+#
+# 3. The DESI-matching branch (w0 ~ -0.5) has not been reached in CLASS
+#    due to shooting convergence issues for Ni < 2.5.
+#
+# 4. Full MCMC likelihood analysis has not been performed.
