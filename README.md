@@ -14,15 +14,23 @@ The exponent coefficient α = √(2/3) is fixed by the connection to Starobinsky
 
 ## Key Results (CLASS Boltzmann Solver)
 
+### Branch scan (fixed Planck-like background parameters)
+
 | Model | Nᵢ | σ₈ | S₈ | w₀ | Age (Gyr) |
 |-------|-----|------|------|--------|-----------|
 | ΛCDM | — | 0.812 | 0.827 | −1.000 | 13.76 |
 | NPT | 3.0 | 0.805 | 0.820 | −0.996 | 13.66 |
 | NPT | 2.9 | 0.802 | 0.817 | −0.995 | 13.61 |
 | NPT | 2.8 | 0.797 | 0.811 | −0.994 | 13.52 |
-| **NPT** | **2.7** | **0.789** | **0.803** | **−0.993** | **13.40** |
+| NPT | 2.7 | 0.789 | 0.803 | −0.993 | 13.40 |
 
-**Nᵢ = 2.7 yields σ₈ = 0.789**, equal to the DES Y6 central value (0.789 ± 0.012), reducing the S₈ tension from ~3.8σ to ~1.2σ in the present CLASS implementation.
+### Joint fit (H₀, ω_cdm, Nᵢ free; compressed Planck + BAO + DES Y6 likelihoods)
+
+| H₀ | ω_cdm | Nᵢ | σ₈ | S₈ | Age (Gyr) | ΔAIC vs ΛCDM |
+|----|--------|-----|------|------|-----------|--------------|
+| **67** | **0.115** | **2.9** | **0.779** | **0.786** | **13.82** | **−41.6** |
+
+The joint best-fit resolves the age tension (13.82 Gyr consistent with Planck's 13.80 ± 0.02 Gyr), places S₈ within 0.3σ of DES Y6 (0.789 ± 0.012), and preserves the CMB angular scale (100θₛ = 1.040). The ΔAIC = −41.6 (after +2 penalty for Nᵢ) is computed against compressed likelihoods and requires confirmation against the full Planck Cℓ spectrum.
 
 ## Predictions (Timestamped: April 2026)
 
@@ -34,7 +42,7 @@ The exponent coefficient α = √(2/3) is fixed by the connection to Starobinsky
 
 ### Shape-specific (unique to Starobinsky form)
 - **P1**: Thawing coefficient p = 1.30 (vs quadratic 1.50, exponential 2.00)
-- **P2**: w(a) curvature w₂ = −0.06 beyond CPL
+- **P2**: w(a) curvature w₂ < 0 beyond CPL (|w₂| ~ 0.003 in CLASS solution; unlikely to be observationally accessible with current surveys)
 - **P3**: σ₈ shifted toward lensing-preferred values
 
 ### Falsification conditions
@@ -90,7 +98,7 @@ The field N is interpreted as a **completion deficit**: a measure of residual Lo
 
 - **Working paper quality**: Strong
 - **CLASS implementation**: Operational (v3.3.4, modified background.c)
-- **Pipeline validation**: Partial (branch scan complete; full MCMC pending)
+- **Pipeline validation**: Partial (branch scan + compressed-likelihood joint fit complete; full Planck Cℓ MCMC pending)
 - **Honest confidence**: ~30–55% on minimal M1 as a serious late-time model
 
 ## Citation
